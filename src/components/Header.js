@@ -1,31 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { auth, provider } from "../firebase";
 import {
   selectUserName,
   selectUserPhoto,
   setUserLogin,
-  setSignout,
+  setSignOut,
 } from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 function Header() {
-  const [authuser, setAuthUser] = useState("");
   const dispatch = useDispatch();
   const userName = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
   const history = useHistory();
 
   useEffect(() => {
+    // track the user state change
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser("");
+        dispatch(
+          setUserLogin({
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+          })
+        );
+        history.push("/");
       }
     });
   }, []);
+
+  // sign in the user
   const signIn = () => {
     auth.signInWithPopup(provider).then((result) => {
       let user = result.user;
@@ -40,9 +47,10 @@ function Header() {
     });
   };
 
+  // logout the user
   const signOut = () => {
     auth.signOut().then(() => {
-      dispatch(setSignout);
+      dispatch(setSignOut);
       history.push("/login");
     });
   };
@@ -57,35 +65,32 @@ function Header() {
         <>
           <NavMenu>
             <a>
-              <img src="/images/home-icon.svg" />
+              <img src="/images/home-icon.svg" alt="" />
               <span>Home</span>
             </a>
             <a>
-              <img src="/images/search-icon.svg" />
+              <img src="/images/search-icon.svg" alt="" />
               <span>SEARCH</span>
             </a>
             <a>
-              <img src="/images/watchlist-icon.svg" />
+              <img src="/images/watchlist-icon.svg" alt="" />
               <span>WATCHLIST</span>
             </a>
             <a>
-              <img src="/images/original-icon.svg" />
+              <img src="/images/original-icon.svg" alt="" />
               <span>ORIGINALS</span>
             </a>
             <a>
-              <img src="/images/movie-icon.svg" />
+              <img src="/images/movie-icon.svg" alt="" />
               <span>MOVIES</span>
             </a>
             <a>
-              <img src="/images/series-icon.svg" />
+              <img src="/images/series-icon.svg" alt="" />
               <span>SERIES</span>
             </a>
           </NavMenu>
 
-          <UserImg
-            src="https://miro.medium.com/max/600/1*PiHoomzwh9Plr9_GA26JcA.png"
-            onClick={signOut}
-          />
+          <UserImg src={userPhoto} onClick={signOut} />
         </>
       )}
     </Nav>
