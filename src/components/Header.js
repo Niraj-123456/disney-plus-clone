@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 function Header() {
-  const [user, setUser] = useState("");
+  const [authuser, setAuthUser] = useState("");
   const dispatch = useDispatch();
   const userName = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
@@ -20,9 +20,9 @@ function Header() {
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        setUser(user);
+        setAuthUser(user);
       } else {
-        setUser("");
+        setAuthUser("");
       }
     });
   }, []);

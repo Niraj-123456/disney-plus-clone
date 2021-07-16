@@ -20,28 +20,28 @@ function Detail() {
           //redirect to home page
         }
       });
-  }, []);
+  }, [id]);
 
   return (
     <Container>
       {movie && (
         <>
           <Background>
-            <img src={movie.backgroundImg} />
+            <img src={movie.backgroundImg} alt="" />
           </Background>
 
           <ImgTitle>
-            <img src={movie.titleImg} />
+            <img src={movie.titleImg} alt="" />
           </ImgTitle>
 
           <Controls>
             <PlayBtn>
-              <img src="/images/play-icon-black.png" />
+              <img src="/images/play-icon-black.png" alt="" />
               <span>Play</span>
             </PlayBtn>
 
             <TrailerBtn>
-              <img src="/images/play-icon-white.png" />
+              <img src="/images/play-icon-white.png" alt="" />
               <span>Trailer</span>
             </TrailerBtn>
 
@@ -50,7 +50,7 @@ function Detail() {
             </AddBtn>
 
             <GroupWatchBtn>
-              <img src="/images/group-icon.png" />
+              <img src="/images/group-icon.png" alt="" />
             </GroupWatchBtn>
           </Controls>
 
@@ -154,7 +154,7 @@ const AddBtn = styled.button`
 `;
 
 const GroupWatchBtn = styled(AddBtn)`
-  background: rgb(0, 0, 0);
+  background-color: rgb(0, 0, 0, 0.6);
 `;
 
 const SubTitle = styled.div`
