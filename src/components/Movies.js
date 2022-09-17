@@ -11,7 +11,7 @@ function Movies() {
     <Container>
       <h4>Recommended For You</h4>
       <Content>
-        {movies &&
+        {movies.length > 0 &&
           movies.map((movie) => (
             <Wrap key={movie.id}>
               <Link to={`/detail/${movie.id}`}>

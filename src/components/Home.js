@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
+
 import styled from "styled-components";
-import ImgSlider from "./ImgSlider";
-import Viewers from "./Viewers";
-import Movies from "./Movies";
 import db from "../firebase";
+import { ref, onValue } from "firebase/database";
+
 import { selectUserName } from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { setMovies } from "../features/movie/movieSlice";
+import ImgSlider from "./ImgSlider";
+import Viewers from "./Viewers";
+import Movies from "./Movies";
 import Login from "./Login";
 
 function Home() {
@@ -14,25 +17,26 @@ function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    db.collection("movies").onSnapshot((snapshot) => {
-      let tempMovies = snapshot.docs.map((doc) => {
-        return { id: doc.id, ...doc.data() };
-      });
-      dispatch(setMovies(tempMovies));
+    const allMovies = ref(db, "movies");
+    return onValue(allMovies, (snapshot) => {
+      const movies = snapshot.val();
+      if (movies) {
+        const newMoviesArr = movies.filter(
+          (value) => Object.keys(value).length !== 0
+        );
+        dispatch(setMovies(newMoviesArr));
+      }
     });
-  }, []);
-  return (
+  }, [dispatch]);
+
+  return userName ? (
     <Container>
-      {userName ? (
-        <>
-          <ImgSlider />
-          <Viewers />
-          <Movies />
-        </>
-      ) : (
-        <Login />
-      )}
+      <ImgSlider />
+      <Viewers />
+      <Movies />
     </Container>
+  ) : (
+    <Login />
   );
 }
 
@@ -45,8 +49,10 @@ const Container = styled.main`
   overflow: hidden;
 
   &:before {
-    background: url("/images/home-background.png") center center / cover
-      no-repeat fixed;
+    background: url("/images/home-background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     content: "";
     position: absolute;
     top: 0;

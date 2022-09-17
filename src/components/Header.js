@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
+
 import styled from "styled-components";
 import { auth, provider } from "../firebase";
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
 import {
   selectUserName,
   selectUserPhoto,
@@ -18,8 +20,32 @@ function Header() {
 
   useEffect(() => {
     // track the user state change
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
+    try {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          dispatch(
+            setUserLogin({
+              name: user.displayName,
+              email: user.email,
+              photo: user.photoURL,
+            })
+          );
+          history.push("/");
+        }
+      });
+      return () => {
+        unsubscribe();
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  }, [dispatch, history]);
+
+  // sign in the user
+  const signIn = () => {
+    try {
+      signInWithPopup(auth, provider).then((result) => {
+        let user = result.user;
         dispatch(
           setUserLogin({
             name: user.displayName,
@@ -28,35 +54,27 @@ function Header() {
           })
         );
         history.push("/");
-      }
-    });
-  }, []);
-
-  // sign in the user
-  const signIn = () => {
-    auth.signInWithPopup(provider).then((result) => {
-      let user = result.user;
-      dispatch(
-        setUserLogin({
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL,
-        })
-      );
-      history.push("/");
-    });
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // logout the user
-  const signOut = () => {
-    auth.signOut().then(() => {
-      dispatch(setSignOut);
-      history.push("/login");
-    });
+  const logOut = () => {
+    try {
+      signOut(auth).then(() => {
+        dispatch(setSignOut());
+        history.push("/login");
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <Nav>
-      <Logo src="/images/logo.svg" />
+      <Logo src="/images/logo.svg" alt="Logo" />
+
       {!userName ? (
         <LoginContainer>
           <Login onClick={signIn}>Login</Login>
@@ -64,33 +82,33 @@ function Header() {
       ) : (
         <>
           <NavMenu>
-            <a>
+            <a href="#/">
               <img src="/images/home-icon.svg" alt="" />
               <span>HOME</span>
             </a>
-            <a>
+            <a href="#/">
               <img src="/images/search-icon.svg" alt="" />
               <span>SEARCH</span>
             </a>
-            <a>
+            <a href="#/">
               <img src="/images/watchlist-icon.svg" alt="" />
               <span>WATCHLIST</span>
             </a>
-            <a>
+            <a href="#/">
               <img src="/images/original-icon.svg" alt="" />
               <span>ORIGINALS</span>
             </a>
-            <a>
+            <a href="#/">
               <img src="/images/movie-icon.svg" alt="" />
               <span>MOVIES</span>
             </a>
-            <a>
+            <a href="#/">
               <img src="/images/series-icon.svg" alt="" />
               <span>SERIES</span>
             </a>
           </NavMenu>
 
-          <UserImg src={userPhoto} onClick={signOut} />
+          <UserImg src={userPhoto} onClick={logOut} />
         </>
       )}
     </Nav>
@@ -118,6 +136,7 @@ const NavMenu = styled.div`
   flex: 1;
   margin-right: 25px;
   align-items: center;
+
   a {
     display: flex;
     align-items: center;
