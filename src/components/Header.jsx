@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-
+import React from "react";
 import styled from "styled-components";
-import { auth, provider } from "../firebase";
-import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
+import { Link, NavLink } from "react-router-dom";
+import { auth } from "../firebase";
+import { signOut } from "firebase/auth";
 import {
   selectUserName,
   selectUserPhoto,
-  setUserLogin,
   setSignOut,
 } from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,48 +16,6 @@ function Header() {
   const userName = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
   const history = useHistory();
-
-  useEffect(() => {
-    // track the user state change
-    try {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          dispatch(
-            setUserLogin({
-              name: user.displayName,
-              email: user.email,
-              photo: user.photoURL,
-            })
-          );
-          history.push("/");
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-    } catch (err) {
-      console.log(err);
-    }
-  }, [dispatch, history]);
-
-  // sign in the user
-  const signIn = () => {
-    try {
-      signInWithPopup(auth, provider).then((result) => {
-        let user = result.user;
-        dispatch(
-          setUserLogin({
-            name: user.displayName,
-            email: user.email,
-            photo: user.photoURL,
-          })
-        );
-        history.push("/");
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   // logout the user
   const logOut = () => {
@@ -73,39 +30,43 @@ function Header() {
   };
   return (
     <Nav>
-      <Logo src="/images/logo.svg" alt="Logo" />
+      <a href="/">
+        <Logo src="/images/logo.svg" alt="Logo" />
+      </a>
 
-      {!userName ? (
+      {userName === null || userName === "" || userName === undefined ? (
         <LoginContainer>
-          <Login onClick={signIn}>Login</Login>
+          <Login>
+            <Link to="/login">Login</Link>
+          </Login>
         </LoginContainer>
       ) : (
         <>
           <NavMenu>
-            <a href="#/">
+            <NavLink to="/home">
               <img src="/images/home-icon.svg" alt="" />
               <span>HOME</span>
-            </a>
-            <a href="#/">
+            </NavLink>
+            <NavLink to="/search">
               <img src="/images/search-icon.svg" alt="" />
               <span>SEARCH</span>
-            </a>
-            <a href="#/">
+            </NavLink>
+            <NavLink to="/watchlist">
               <img src="/images/watchlist-icon.svg" alt="" />
               <span>WATCHLIST</span>
-            </a>
-            <a href="#/">
+            </NavLink>
+            <NavLink to="/originals">
               <img src="/images/original-icon.svg" alt="" />
               <span>ORIGINALS</span>
-            </a>
-            <a href="#/">
+            </NavLink>
+            <NavLink to="/movies">
               <img src="/images/movie-icon.svg" alt="" />
               <span>MOVIES</span>
-            </a>
-            <a href="#/">
+            </NavLink>
+            <NavLink to="/series">
               <img src="/images/series-icon.svg" alt="" />
               <span>SERIES</span>
-            </a>
+            </NavLink>
           </NavMenu>
 
           <UserImg src={userPhoto} onClick={logOut} />
@@ -139,6 +100,7 @@ const NavMenu = styled.div`
 
   a {
     display: flex;
+    color: #fff;
     align-items: center;
     padding: 0 12px;
     cursor: pointer;
@@ -167,8 +129,11 @@ const NavMenu = styled.div`
         transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
       }
     }
+    &.active {
+    }
 
-    &:hover {
+    &:hover,
+    &.active {
       span:after {
         transform: scaleX(1);
         opacity: 1;
@@ -193,6 +158,10 @@ const Login = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   transition: all 0.2s ease 0s;
   cursor: pointer;
+
+  a {
+    color: #fff;
+  }
 
   &:hover {
     background-color: #f9f9f9;

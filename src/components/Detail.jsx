@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import db from "../firebase";
+import { child, get, ref } from "firebase/database";
 
 function Detail() {
   const { id } = useParams();
@@ -9,29 +10,33 @@ function Detail() {
 
   useEffect(() => {
     //Grab movie info from DB
-    db.collection("movies")
-      .doc(id)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          // save the movie data
-          setMovie(doc.data());
-        } else {
-          //redirect to home page
-        }
-      });
+    const getMovieDetail = async () => {
+      const dbRef = ref(db);
+      try {
+        await get(child(dbRef, `movies/${id}`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            setMovie(snapshot.val());
+          } else setMovie({});
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getMovieDetail();
   }, [id]);
+
+  const genre = movie?.genre.filter((m) => Object.keys(m).length !== 0);
 
   return (
     <Container>
       {movie && (
         <>
           <Background>
-            <img src={movie.backgroundImg} alt="" />
+            <img src={movie.url} alt={movie.title} />
           </Background>
 
           <ImgTitle>
-            <img src={movie.titleImg} alt="" />
+            <img src={movie.url} alt={movie.title} />
           </ImgTitle>
 
           <Controls>
@@ -54,7 +59,13 @@ function Detail() {
             </GroupWatchBtn>
           </Controls>
 
-          <SubTitle>{movie.subTitle}</SubTitle>
+          <Title>{movie.title}</Title>
+
+          <GenreBlock>
+            {genre.map((g) => (
+              <MovieGenre>{g.name}</MovieGenre>
+            ))}
+          </GenreBlock>
 
           <Description>{movie.description}</Description>
         </>
@@ -78,7 +89,7 @@ const Background = styled.div`
   bottom: 0;
   right: 0;
   z-index: -1;
-  opacity: 0.8;
+  opacity: 0.5;
 
   img {
     height: 100%;
@@ -157,17 +168,37 @@ const GroupWatchBtn = styled(AddBtn)`
   background-color: rgb(0, 0, 0, 0.6);
 `;
 
-const SubTitle = styled.div`
+const Title = styled.div`
   color: rgb(249, 249, 249);
-  font-size: 15px;
+  font-size: 25px;
+  letter-spacing: 0.05em;
   min-height: 20px;
   margin-top: 26px;
 `;
 
+const GenreBlock = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const MovieGenre = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+  color: rgb(249, 249, 249);
+  margin-block: 10px 20px;
+  background: rgba(249, 249, 249, 0);
+  border: solid 1.75px #fff;
+  padding: 2px 5px;
+  border-radius: 4px;
+`;
+
 const Description = styled.div`
-  line-height: 1.4;
-  font-size: 20px;
+  line-height: 1.5;
+  font-size: 16px;
   margin-top: 16px;
+  letter-spacing: 0.05em;
   color: rgb(249, 249, 249);
   max-width: 760px;
 `;

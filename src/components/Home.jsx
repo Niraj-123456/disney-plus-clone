@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import db from "../firebase";
 import { ref, onValue } from "firebase/database";
+import { useHistory } from "react-router-dom";
 
 import { selectUserName } from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,11 +11,11 @@ import { setMovies } from "../features/movie/movieSlice";
 import ImgSlider from "./ImgSlider";
 import Viewers from "./Viewers";
 import Movies from "./Movies";
-import Login from "./Login";
 
 function Home() {
-  const userName = useSelector(selectUserName);
+  const user = useSelector(selectUserName);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     const allMovies = ref(db, "movies");
@@ -29,14 +30,18 @@ function Home() {
     });
   }, [dispatch]);
 
-  return userName ? (
-    <Container>
-      <ImgSlider />
-      <Viewers />
-      <Movies />
-    </Container>
-  ) : (
-    <Login />
+  useEffect(() => {
+    if (!user) history.push("/login");
+  }, [user, history]);
+
+  return (
+    user && (
+      <Container>
+        <ImgSlider />
+        <Viewers />
+        <Movies />
+      </Container>
+    )
   );
 }
 

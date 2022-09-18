@@ -1,7 +1,8 @@
 import React from "react";
 import "./App.css";
-import Header from "./components/Header.js";
+import Header from "./components/Header";
 import Home from "./components/Home";
+import Index from "./components/Index";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Detail from "./components/Detail";
 import Login from "./components/Login";
@@ -15,11 +16,14 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
-          <Route path="/detail/:id">
+          <Route path="/movie/:id">
             <Detail />
           </Route>
-          <Route path="/">
+          <Route path="/home">
             <Home />
+          </Route>
+          <Route path="/">
+            <Index />
           </Route>
         </Switch>
       </Router>

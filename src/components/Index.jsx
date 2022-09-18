@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-function Login() {
+function Index() {
   return (
     <Container>
       <CTA>
@@ -18,7 +18,7 @@ function Login() {
   );
 }
 
-export default Login;
+export default Index;
 
 const Container = styled.div`
   position: relative;
