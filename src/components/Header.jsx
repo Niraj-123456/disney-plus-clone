@@ -1,45 +1,78 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Link, NavLink } from "react-router-dom";
+
+import LogoutModal from "./LogoutModal";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import {
-  selectUserName,
-  selectUserPhoto,
-  setSignOut,
-} from "../features/user/userSlice";
+import { currentUser, setSignOut } from "../features/user/userSlice";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 function Header() {
   const dispatch = useDispatch();
-  const userName = useSelector(selectUserName);
-  const userPhoto = useSelector(selectUserPhoto);
   const history = useHistory();
+  const user = useSelector(currentUser);
+  const logoutContainerRef = useRef();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // show logout dialog when user icon is clicked
+  const handleShowLogoutModal = () => {
+    setShowLogoutModal(!showLogoutModal);
+  };
 
   // logout the user
-  const logOut = () => {
+  const handleLogOut = (props) => {
     try {
       signOut(auth).then(() => {
         dispatch(setSignOut());
-        history.push("/login");
+        setShowLogoutModal(false);
+        history.push({ pathname: "/login", state: { from: props.location } });
       });
     } catch (err) {
       console.log(err);
     }
   };
+
+  // close the logout dialog when click outside the logout container
+  useEffect(() => {
+    const handleClickOutsideLogoutContainer = (e) => {
+      if (
+        showLogoutModal &&
+        logoutContainerRef.current &&
+        !logoutContainerRef.current.contains(e.target)
+      ) {
+        setShowLogoutModal(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutsideLogoutContainer, true);
+
+    return () =>
+      document.removeEventListener(
+        "click",
+        handleClickOutsideLogoutContainer,
+        true
+      );
+  }, [showLogoutModal]);
+
   return (
     <Nav>
       <a href="/">
         <Logo src="/images/logo.svg" alt="Logo" />
       </a>
 
-      {userName === null || userName === "" || userName === undefined ? (
-        <LoginContainer>
+      {user === null ? (
+        <RegisterLoginContainer>
+          <Login>
+            <Link to="/register">Register</Link>
+          </Login>
           <Login>
             <Link to="/login">Login</Link>
           </Login>
-        </LoginContainer>
+        </RegisterLoginContainer>
       ) : (
         <>
           <NavMenu>
@@ -69,7 +102,24 @@ function Header() {
             </NavLink>
           </NavMenu>
 
-          <UserImg src={userPhoto} onClick={logOut} />
+          <LogoutContainer ref={logoutContainerRef}>
+            {currentUser?.photoURL ? (
+              <UserImg
+                src={currentUser?.photoURL}
+                onClick={handleShowLogoutModal}
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                style={{
+                  fontSize: "33px",
+                  cursor: "pointer",
+                }}
+                onClick={handleShowLogoutModal}
+              />
+            )}
+            {showLogoutModal && <LogoutModal handleLogOut={handleLogOut} />}
+          </LogoutContainer>
         </>
       )}
     </Nav>
@@ -84,7 +134,6 @@ const Nav = styled.nav`
   display: flex;
   align-items: center;
   padding: 0 36px;
-  overflow-x: hidden;
 `;
 
 const Logo = styled.img`
@@ -142,6 +191,10 @@ const NavMenu = styled.div`
   }
 `;
 
+const LogoutContainer = styled.div`
+  position: relative;
+`;
+
 const UserImg = styled.img`
   height: 40px;
   width: 40px;
@@ -156,7 +209,7 @@ const Login = styled.div`
   letter-spacing: 1.5px;
   text-transform: uppercase;
   background-color: rgba(0, 0, 0, 0.5);
-  transition: all 0.2s ease 0s;
+  transition: all 0.2s ease;
   cursor: pointer;
 
   a {
@@ -165,13 +218,17 @@ const Login = styled.div`
 
   &:hover {
     background-color: #f9f9f9;
-    color: #000;
     border-color: transparent;
+
+    a {
+      color: #000;
+    }
   }
 `;
 
-const LoginContainer = styled.div`
+const RegisterLoginContainer = styled.div`
   display: flex;
   flex: 1;
+  gap: 10px;
   justify-content: flex-end;
 `;

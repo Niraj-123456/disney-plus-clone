@@ -5,7 +5,7 @@ function InputField(props) {
   return (
     <Container>
       <Label htmlFor={props.id}>{props.label}</Label>
-      <Input type="text" id={props.id} placeholder={props.placeholder} />
+      <Input {...props} id={props.id} placeholder={props.placeholder} />
     </Container>
   );
 }

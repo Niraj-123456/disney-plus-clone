@@ -9,7 +9,7 @@ function Movies() {
 
   return (
     <Container>
-      <h4>Recommended For You</h4>
+      <h4 style={{ marginBottom: "20px" }}>Recommended For You</h4>
       <Content>
         {movies?.length > 0 &&
           movies?.map((movie) => (

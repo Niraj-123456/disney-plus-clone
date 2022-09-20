@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: "",
-  email: "",
-  photo: "",
+  user: null,
 };
 
 const userSlice = createSlice({
@@ -11,22 +9,25 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserLogin: (state, action) => {
-      state.name = action.payload.name;
-      state.email = action.payload.email;
-      state.photo = action.payload.photo;
+      state.user = {
+        displayName: action.payload?.displayName,
+        email: action.payload?.email,
+        photoURL: action.payload?.photoURL,
+        token: {
+          accessToken: action.payload?.stsTokenManager?.accessToken,
+          expirationTime: action.payload?.stsTokenManager?.expirationTime,
+          refreshToken: action.payload?.stsTokenManager?.refreshToken,
+        },
+      };
     },
     setSignOut: (state) => {
-      state.name = null;
-      state.email = null;
-      state.photo = null;
+      state.user = null;
     },
   },
 });
 
 export const { setUserLogin, setSignOut } = userSlice.actions;
 
-export const selectUserName = (state) => state.user.name;
-export const selectUserEmail = (state) => state.user.email;
-export const selectUserPhoto = (state) => state.user.photo;
+export const currentUser = (state) => state.user?.user;
 
 export default userSlice.reducer;

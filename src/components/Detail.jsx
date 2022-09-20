@@ -7,7 +7,6 @@ import { child, get, ref } from "firebase/database";
 function Detail() {
   const { id } = useParams();
   const [movie, setMovie] = useState();
-
   useEffect(() => {
     //Grab movie info from DB
     const getMovieDetail = async () => {
@@ -63,7 +62,7 @@ function Detail() {
 
           <GenreBlock>
             {genre.map((g) => (
-              <MovieGenre>{g.name}</MovieGenre>
+              <MovieGenre key={g.id}>{g.name}</MovieGenre>
             ))}
           </GenreBlock>
 
@@ -101,7 +100,7 @@ const Background = styled.div`
 const ImgTitle = styled.div`
   height: 30vh;
   min-height: 170px;
-  width: 35vw;
+  width: max-content;
   min-width: 200px;
   margin-top: 60px;
   margin-bottom: 30px;

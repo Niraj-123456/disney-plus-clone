@@ -2,7 +2,12 @@ import React from "react";
 import styled from "styled-components";
 
 function Button(props) {
-  return <BTN {...props}>{props.label}</BTN>;
+  return (
+    <BTN {...props}>
+      {props.label}
+      {props.icon && <span>{props.icon}</span>}
+    </BTN>
+  );
 }
 
 export default Button;

@@ -1,86 +1,113 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, provider } from "../firebase";
-import { signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { toast } from "react-toastify";
 
-import { selectUserName, setUserLogin } from "../features/user/userSlice";
+import { currentUser, setUserLogin } from "../features/user/userSlice";
 import InputField from "./common/InputField";
 import Button from "./common/Button";
 
 function Login() {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const dispatch = useDispatch();
   const history = useHistory();
 
   // get the current user
-  const user = useSelector(selectUserName);
+  const user = useSelector(currentUser);
+
+  useEffect(() => {
+    // track the user state change
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(setUserLogin(user));
+        history.push("/home");
+      }
+    });
+    return () => unsubscribe();
+  }, [dispatch, history]);
 
   // sign in the user with google provider
   const signIn = () => {
     try {
       signInWithPopup(auth, provider).then((result) => {
         let user = result.user;
-        dispatch(
-          setUserLogin({
-            name: user.displayName,
-            email: user.email,
-            photo: user.photoURL,
-          })
-        );
+        dispatch(setUserLogin(user));
         history.push("/home");
       });
     } catch (err) {
       console.log(err);
+      toast.error(err.message);
     }
   };
 
-  useEffect(() => {
-    // track the user state change
+  // sign in with email and password
+  const logInWithEmailAndPassword = async (e) => {
+    e.preventDefault();
     try {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          dispatch(
-            setUserLogin({
-              name: user.displayName,
-              email: user.email,
-              photo: user.photoURL,
-            })
-          );
-          history.push("/home");
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      dispatch(setUserLogin(user));
+      history.push("/home");
     } catch (err) {
       console.log(err);
+      toast.error(err.message);
     }
-  }, [dispatch, history]);
+  };
 
+  // if user exist, redirect to home
   useEffect(() => {
     if (user) history.push("/home");
   }, [user, history]);
 
   return (
-    user === null ||
-    user === "" ||
-    (user === undefined && (
+    (user === null || user === "" || user === undefined) && (
       <Container>
-        <LoginContainer>
-          <InputField label="Email" id="email" placeholder="Enter your email" />
+        <LoginContainer onSubmit={logInWithEmailAndPassword}>
+          <InputField
+            label="Email"
+            id="email"
+            placeholder="Enter your email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <InputField
             label="Password"
             type="password"
             id="password"
             placeholder="Enter your password"
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <Button label="Login" style={{ marginTop: "15px" }} />
+          <Button label="Login" type="submit" style={{ marginTop: "15px" }} />
+          <p style={{ textAlign: "center" }}>Don't have an account?</p>
+          <Button
+            label="Register"
+            type="button"
+            onClick={() => history.push("/register")}
+            style={{ background: "#fff", color: "#000", fontWeight: "600" }}
+          />
         </LoginContainer>
-        <Button label="Login with Google" onClick={signIn} />
+        <Button
+          label="Login with Google"
+          type="button"
+          icon={
+            <FontAwesomeIcon
+              icon={faGoogle}
+              style={{ fontSize: "16px", marginLeft: "5px" }}
+            />
+          }
+          onClick={signIn}
+        />
       </Container>
-    ))
+    )
   );
 }
 
@@ -113,7 +140,7 @@ const Container = styled.div`
   }
 `;
 
-const LoginContainer = styled.div`
+const LoginContainer = styled.form`
   background: rgba(9, 11, 19, 0.8);
   border-radius: 4px;
   width: 35%;
