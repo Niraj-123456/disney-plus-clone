@@ -7,7 +7,7 @@ const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY, // Auth / General Use
   appId: process.env.REACT_APP_FIREBASE_APP_ID, // General Use
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID, // General Use
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  databaseURL: "https://disney-plus-clone-c1e07-default-rtdb.firebaseio.com",
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN, // Auth with popup/redirect
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET, // Storage
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID, // Cloud Messaging
