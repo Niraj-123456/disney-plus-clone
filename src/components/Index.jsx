@@ -5,14 +5,14 @@ function Index() {
   return (
     <Container>
       <CTA>
-        <CTALogoOne src="/images/cta-logo-one.svg" />
+        <CTALogoOne src="/disney-plus-clone/images/cta-logo-one.svg" />
         <SignUp>GET ALL THERE</SignUp>
         <Description>
           Get Premier Access to Raya and the Last Dragon for an additional fee
           with a Disney+ subscription. As of 03/26/21, the price of Disney+ and
           The Disney Bundle will increase by $1.
         </Description>
-        <CTALogoTwo src="/images/cta-logo-two.png" />
+        <CTALogoTwo src="/disney-plus-clone/images/cta-logo-two.png" />
       </CTA>
     </Container>
   );
@@ -36,7 +36,7 @@ const Container = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url("/images/login-background.jpg");
+    background-image: url("/disney-plus-clone/images/login-background.jpg");
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;

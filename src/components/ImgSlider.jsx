@@ -16,10 +16,10 @@ function ImgSlider() {
   return (
     <Carousel {...settings}>
       <Wrap>
-        <img src="/images/slider-badging.jpg" alt="" />
+        <img src="/disney-plus-clone/images/slider-badging.jpg" alt="" />
       </Wrap>
       <Wrap>
-        <img src="/images/slider-badag.jpg" alt="" />
+        <img src="/disney-plus-clone/images/slider-badag.jpg" alt="" />
       </Wrap>
     </Carousel>
   );

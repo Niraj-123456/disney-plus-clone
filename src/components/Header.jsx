@@ -10,11 +10,11 @@ import { currentUser, setSignOut } from "../features/user/userSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const user = useSelector(currentUser);
   const logoutContainerRef = useRef();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -30,7 +30,7 @@ function Header() {
       signOut(auth).then(() => {
         dispatch(setSignOut());
         setShowLogoutModal(false);
-        history.push({ pathname: "/login", state: { from: props.location } });
+        navigate({ pathname: "/login", state: { from: props.location } });
       });
     } catch (err) {
       console.log(err);
@@ -61,7 +61,7 @@ function Header() {
   return (
     <Nav>
       <a href="/">
-        <Logo src="/images/logo.svg" alt="Logo" />
+        <Logo src="/disney-plus-clone/images/logo.svg" alt="Logo" />
       </a>
 
       {user === null ? (
@@ -77,27 +77,27 @@ function Header() {
         <>
           <NavMenu>
             <NavLink to="/home">
-              <img src="/images/home-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/home-icon.svg" alt="" />
               <span>HOME</span>
             </NavLink>
             <NavLink to="/search">
-              <img src="/images/search-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/search-icon.svg" alt="" />
               <span>SEARCH</span>
             </NavLink>
             <NavLink to="/watchlist">
-              <img src="/images/watchlist-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/watchlist-icon.svg" alt="" />
               <span>WATCHLIST</span>
             </NavLink>
             <NavLink to="/originals">
-              <img src="/images/original-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/original-icon.svg" alt="" />
               <span>ORIGINALS</span>
             </NavLink>
             <NavLink to="/movies">
-              <img src="/images/movie-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/movie-icon.svg" alt="" />
               <span>MOVIES</span>
             </NavLink>
             <NavLink to="/series">
-              <img src="/images/series-icon.svg" alt="" />
+              <img src="/disney-plus-clone/images/series-icon.svg" alt="" />
               <span>SERIES</span>
             </NavLink>
           </NavMenu>

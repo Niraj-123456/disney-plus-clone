@@ -13,13 +13,13 @@ import {
 
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // get current user
@@ -42,11 +42,11 @@ function Register() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(setUserLogin(user));
-        history.push("/home");
+        navigate("/home");
       }
     });
     return () => unsubscribe();
-  }, [dispatch, history]);
+  }, [dispatch, navigate]);
 
   // register using email and password
   const registerUser = async (e) => {
@@ -67,7 +67,7 @@ function Register() {
           );
 
           dispatch(setUserLogin(user));
-          history.push("/home");
+          navigate("/home");
         }
       } catch (err) {
         console.log(err);
@@ -81,8 +81,8 @@ function Register() {
 
   // if user exists, redirect to home page
   useEffect(() => {
-    if (user) history.push("/home");
-  }, [user, history]);
+    if (user) navigate("/home");
+  }, [user, navigate]);
 
   return (
     <Container>
@@ -113,7 +113,7 @@ function Register() {
         <Button
           label="Login"
           type="button"
-          onClick={() => history.push("/login")}
+          onClick={() => navigate("/login")}
           style={{ background: "#fff", color: "#000", fontWeight: "600" }}
         />
       </LoginContainer>
@@ -141,7 +141,7 @@ const Container = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url("/images/login-background.jpg");
+    background-image: url("/disney-plus-clone/images/login-background.jpg");
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, provider } from "../firebase";
 import {
@@ -21,7 +21,7 @@ function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // get the current user
   const user = useSelector(currentUser);
@@ -31,11 +31,11 @@ function Login() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(setUserLogin(user));
-        history.push("/home");
+        navigate("/home");
       }
     });
     return () => unsubscribe();
-  }, [dispatch, history]);
+  }, [dispatch, navigate]);
 
   // sign in the user with google provider
   const signIn = () => {
@@ -43,7 +43,7 @@ function Login() {
       signInWithPopup(auth, provider).then((result) => {
         let user = result.user;
         dispatch(setUserLogin(user));
-        history.push("/home");
+        navigate("/home");
       });
     } catch (err) {
       console.log(err);
@@ -57,7 +57,7 @@ function Login() {
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       dispatch(setUserLogin(user));
-      history.push("/home");
+      navigate("/home");
     } catch (err) {
       console.log(err);
       toast.error(err.message);
@@ -66,8 +66,8 @@ function Login() {
 
   // if user exist, redirect to home
   useEffect(() => {
-    if (user) history.push("/home");
-  }, [user, history]);
+    if (user) navigate("/home");
+  }, [user, navigate]);
 
   return (
     (user === null || user === "" || user === undefined) && (
@@ -91,7 +91,7 @@ function Login() {
           <Button
             label="Register"
             type="button"
-            onClick={() => history.push("/register")}
+            onClick={() => navigate("/register")}
             style={{ background: "#fff", color: "#000", fontWeight: "600" }}
           />
         </LoginContainer>
@@ -131,7 +131,7 @@ const Container = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url("/images/login-background.jpg");
+    background-image: url("/disney-plus-clone/images/login-background.jpg");
     background-size: cover;
     background-position: top;
     background-repeat: no-repeat;

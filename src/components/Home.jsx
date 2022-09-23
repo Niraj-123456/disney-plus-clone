@@ -48,7 +48,7 @@ const Container = styled.main`
   overflow: hidden;
 
   &:before {
-    background: url("/images/home-background.png");
+    background: url("/disney-plus-clone/images/home-background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

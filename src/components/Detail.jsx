@@ -40,12 +40,12 @@ function Detail() {
 
           <Controls>
             <PlayBtn>
-              <img src="/images/play-icon-black.png" alt="" />
+              <img src="/disney-plus-clone/images/play-icon-black.png" alt="" />
               <span>Play</span>
             </PlayBtn>
 
             <TrailerBtn>
-              <img src="/images/play-icon-white.png" alt="" />
+              <img src="/disney-plus-clone/images/play-icon-white.png" alt="" />
               <span>Trailer</span>
             </TrailerBtn>
 
@@ -54,7 +54,7 @@ function Detail() {
             </AddBtn>
 
             <GroupWatchBtn>
-              <img src="/images/group-icon.png" alt="" />
+              <img src="/disney-plus-clone/images/group-icon.png" alt="" />
             </GroupWatchBtn>
           </Controls>
 
