@@ -15,7 +15,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 function App() {
   return (
     <div className="App">
-      <Router>
+      <Router basename="/disney-plus-clone">
         <ToastContainer />
         <Header />
         <Switch>
